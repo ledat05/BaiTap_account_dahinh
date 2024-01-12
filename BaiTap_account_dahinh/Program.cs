@@ -1,113 +1,123 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BaiTap_account_dahinh
 {
-    class account
+    class Account
     {
-        protected double balance;
+        private double balance;
 
-        public account() : base()
-        { }
-        public account(double balance)
+        public Account()
+        {
+        }
+        public Account(double balance)
         {
             this.balance = balance;
         }
-        public virtual bool Withdraw(double amount)
+        public double Balance
+        {
+            set { this.balance = value; }
+            get { return balance; }
+        }
+        public virtual bool RutTien(double amount)
         {
             return false;
         }
-        public virtual bool Deposit(double amount)
+        public virtual bool NapTien(double amount)
         {
             return false;
         }
-        public virtual void PrintBalace()
-        { }  
+        public virtual void InHoaDon()
+        {
+        }
     }
-    class SavingAcount : account
+    class SavingsAccount : Account
     {
-        private double interesRate = 0.8;
+        private double laisuat = 0.8;
 
-        public SavingAcount()
+        public SavingsAccount()
         {
-
         }
-        public SavingAcount(double interesRate, double balance):base(balance)
+        public SavingsAccount(double balance, double laisuat) : base(balance)
         {
-            this.interesRate = interesRate;
+            this.laisuat = laisuat;
         }
-        public override bool Withdraw(double amount)
+        public double Laisuat
         {
-            if (amount < balance)
+            set { laisuat = value; }
+            get { return laisuat; }
+        }
+        public override bool RutTien(double amount)
+        {
+            if (amount > 0 && amount <= Balance)
             {
-                balance += balance - (amount + amount * interesRate);
+                Balance = Balance - (amount + amount * laisuat);
                 return true;
             }
             return false;
         }
-        public override bool Deposit(double amount)
+        public override bool NapTien(double amount)
         {
-            if (amount < balance)
+            if (amount > 0)
             {
-                balance = balance + (amount + amount * interesRate);
+                Balance = Balance + (amount + amount * laisuat);
                 return true;
             }
             return false;
         }
-        public override void PrintBalace()
+        public override void InHoaDon()
         {
-            Console.WriteLine("Xuat so du{0}", balance);
+            Console.WriteLine("So su cua ban {0}", Balance);
         }
-        
     }
-    class CheckingAccount:account
+    class CheckingAccount : Account
     {
-        private double interesRate;
         public CheckingAccount()
-        { }
-        public CheckingAccount(double interesRate,double balance):base(balance)
         {
-            this.interesRate = interesRate;
         }
-        public override bool Withdraw(double amount)
+        public CheckingAccount(double balance) : base(balance)
         {
-            if (amount < balance)
+
+        }
+        public override bool RutTien(double amount)
+        {
+            if (amount > 0 && amount <= Balance)
             {
-                balance -= balance - (amount + amount * interesRate);
+                Balance -= amount;
                 return true;
             }
             return false;
         }
-        public override bool Deposit(double amount)
+        public override bool NapTien(double amount)
         {
-            if (amount < balance)
+            if (amount > 0)
             {
-                balance = balance + (amount + amount * interesRate);
+                Balance += amount;
                 return true;
             }
             return false;
         }
-        public override void PrintBalace()
+        public override void InHoaDon()
         {
-            Console.WriteLine("Xuat so du {0}", balance);
+            Console.WriteLine("So du cua ban {0}", Balance);
         }
 
-    }
-    class Program
-    {
-        static void Main(string[] args)
+static void Main(string[] args)
         {
-            account tk1 = new account();
-            tk1.Withdraw(100);
-            tk1.PrintBalace();
-            tk1.Deposit(1000);
-            account tk2 = new account();
-            tk2.Withdraw(200);
-            tk2.PrintBalace();
-            tk2.Deposit(1888);
+            Account ac1 = new SavingsAccount();
+            ac1.NapTien(1000);
+            ac1.RutTien(100);
+            ac1.InHoaDon();
+            // Creating checking account object
+            Account ac2 = new CheckingAccount(5000);
+            ac2.NapTien(1000);
+            ac2.RutTien(3000);
+            ac2.InHoaDon();
+
             Console.ReadLine();
         }
     }
